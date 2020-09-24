@@ -1,5 +1,4 @@
 .messages {
-    overflow: auto;
     flex: auto;
     height: 200px;
 }

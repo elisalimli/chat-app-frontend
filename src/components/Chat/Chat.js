@@ -3,6 +3,7 @@ import queryString from "query-string";
 import io from "socket.io-client";
 
 import "./Chat.css";
+import TextContainer from "../TextContainer/TextContainer";
 import InfoBar from "../InfoBar/InfoBar";
 import Input from "../Input/Input";
 import Messages from "../Messages/Messages";
@@ -13,8 +14,11 @@ const Chat = ({ location }) => {
   const [room, setRoom] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  var salam;
-  const ENDPOINT = "https://chat-server-app7.herokuapp.com/";
+  const [users, setUsers] = useState([]);
+
+  // const ENDPOINT = "https://chat-server-app7.herokuapp.com/";
+  const ENDPOINT = "localhost:5000";
+
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
 
@@ -23,6 +27,7 @@ const Chat = ({ location }) => {
     setRoom(room);
 
     socket.emit("join", { name, room }, (error) => {});
+
     // return () => {
     //   socket.emit("disconnect");
 
@@ -33,7 +38,10 @@ const Chat = ({ location }) => {
   useEffect(() => {
     socket.on("message", (message) => {
       setMessages((messages) => [...messages, message]);
-      // console.log(users);
+    });
+
+    socket.on("roomData", ({ users }) => {
+      setUsers(users);
     });
   }, []);
 
@@ -56,6 +64,7 @@ const Chat = ({ location }) => {
           setMessage={setMessage}
           sendMessage={sendMessage}
         />
+        <TextContainer users={users} />
       </div>
     </div>
   );
